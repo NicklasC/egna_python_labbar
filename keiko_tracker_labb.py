@@ -87,7 +87,7 @@ def get_match_data(match_data: dict) -> dict:
       Analyzes the match data and returns the analyzed result.
 
       Parameters:
-      match_data_blob (dict): The match data that needs analysis.
+      match_data_blob (dict): The single match data blob that needs data retrieval.
 
       Returns:
       dict: A dictionary containing the analyzed match data.
@@ -196,6 +196,16 @@ def get_event_athletes(driver, event_id: int):
     return participants_list
 
 
+def get_match_data_list(match_blobs):
+    match_data_list = []
+    for match in match_blobs:
+        if match["match-data"] is not None:  # New check
+            data = get_match_data(match)
+            match_data_list.append(data)
+        else:
+            print("Knas")
+    return match_data_list
+
 def main():
     scraper = Scraper()
     driver = webdriver.Firefox()
@@ -212,15 +222,9 @@ def main():
 
     keiko_matches_data_blobs = get_match_data_blobs(driver,
                                               f"https://smoothcomp.com/en/event/{event_id}/schedule/matchlist?club=5203")
-    # driver.quit()  # Stänger här tillfälligt
-    keiko_match_data_list = []
 
-    for match in keiko_matches_data_blobs:
-        if match["match-data"] is not None:  # New check
-            data = get_match_data(match)
-            keiko_match_data_list.append(data)
-        else:
-            print("Knas")
+    keiko_match_data_list = get_match_data_list(keiko_matches_data_blobs)
+
 
     print("hepp")
     driver.quit()
